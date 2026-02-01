@@ -52,19 +52,20 @@ export async function getProjectBySlug(
 
     const json = await res.json();
 
-    if (!json.data.length) return null;
-
+    if (!json.data || json.data.length === 0) {
+        return null; // Project not found
+    }
     const p = json.data[0];
 
     return {
         id: p.id,
-        title: p.attributes.title,
-        slug: p.attributes.slug,
-        summary: p.attributes.summary,
-        tech: p.attributes.tech,
-        repo: p.attributes.repo,
-        challenges: p.attributes.challenges,
-        outcome: p.attributes.outcome,
+        title: p.title,
+        slug: p.slug,
+        summary: p.summary,
+        tech: p.tech,
+        repo: p.repo,
+        challenges: p.challenges,
+        outcome: p.outcome,
 
     };
 }

@@ -13,13 +13,13 @@ const { slug } = Astro.params;
 // const post = (await getPostBySlug(slug)).data[0];
 
 if (!slug) {
-    return Astro.redirect("/404");
+    throw new Error(`Project not found for slug: ${slug}`);
 }
 
 const project = await getProjectBySlug(slug);
 
 // Jika proyek tidak ditemukan, redirect ke /projects
 if (!project) {
-    return Astro.redirect("/404");
+    throw new Error(`Project not found for slug: ${slug}`);
 }
 ---

@@ -14,16 +14,18 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
+console.log("Generating project page for slug:", slug);
+
 // Jika slug tidak ada atau invalid, redirect ke /projects
 if (!slug) {
-    return Astro.redirect("/404");
+    throw new Error(`Project not found for slug: ${slug}`);
 }
 
 const project = await getProjectBySlug(slug);
 
 // Jika proyek tidak ditemukan, redirect ke /projects
 if (!project) {
-    return Astro.redirect("/404");
+    throw new Error(`Project not found for slug: ${slug}`);
 }
 ---
 
