@@ -1,5 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { fileURLToPath } from 'node:url';
+
 
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
@@ -13,6 +15,11 @@ export default defineConfig({
   prefetch: true,
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
   }
 });
