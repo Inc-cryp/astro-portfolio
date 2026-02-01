@@ -1,0 +1,130 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/Section.astro";
+import TechBadge from "@/components/Project/TechBadge.astro";
+import { getProjects, getProjectBySlug } from "@/lib/strapi";
+
+export async function getStaticPaths() {
+    const response = await getProjects();
+
+    return response.data.map((p) => ({
+        params: { slug: p.slug },
+    }));
+}
+
+const { slug } = Astro.params;
+
+// Jika slug tidak ada atau invalid, redirect ke /projects
+if (!slug) {
+    return Astro.redirect("/404");
+}
+
+const project = await getProjectBySlug(slug);
+
+// Jika proyek tidak ditemukan, redirect ke /projects
+if (!project) {
+    return Astro.redirect("/404");
+}
+---
+
+<BaseLayout>
+    <article class="max-w-3xl mx-auto py-12 space-y-12">
+        <!-- HEADER -->
+        <header>
+            <h1 class="text-3xl font-bold">{project.title}</h1>
+            <p class="mt-3 text-gray-600 dark:text-gray-400">
+                {project.summary}
+            </p>
+
+            <div class="flex flex-wrap gap-2 mt-4">
+                {project.tech.map((t) => <TechBadge label={t} />)}
+            </div>
+        </header>
+
+        <!-- SYSTEM OVERVIEW -->
+        <Section title="System Overview">
+            <p>Client → Rate Limiting API → Redis</p>
+        </Section>
+
+        <!-- PROBLEM -->
+        <Section title="Problem">
+            <p>
+                Sistem tidak memiliki mekanisme rate limiting yang memadai
+                sehingga tidak mampu menangani lonjakan traffic (traffic spike)
+                secara efektif.
+            </p>
+        </Section>
+
+        <!-- SOLUTION -->
+        <Section title="Solution">
+            <p>
+                Membangun rate limiting service sederhana dan cepat menggunakan
+                Go:
+            </p><br />
+            <ul class="list-disc ml-5 space-y-2">
+                <li>Chi router sebagai HTTP router yang ringan dan cepat</li>
+                <li>In-memory logic dengan Redis</li>
+                <li>Fixed window / sliding window approach</li>
+                <li>Lightweight HTTP middleware</li>
+            </ul>
+        </Section>
+
+        <!-- FEATURES -->
+        <Section title="Key Features">
+            <ul class="grid sm:grid-cols-2 gap-3 text-sm">
+                <li>✔ HTTP rate limiting middleware</li>
+                <li>✔ Redis-backed counter</li>
+                <li>✔ Configurable request limit & window</li>
+                <li>✔ Fast response & low overhead</li>
+                <li>✔ Easy to plug into existing services</li>
+            </ul>
+        </Section>
+
+        <!-- TECH DECISION -->
+        <Section title="Why This Stack">
+            <ul class="space-y-3">
+                <li>
+                    <b>Go</b> - Sangat efisien untuk high-concurrency backend & networking
+                </li>
+                <li><b>Mysql</b> - strong consistency</li>
+                <li>
+                    <b>Redis</b> - Atomic operations & ultra-fast counter untuk rate
+                    limiting
+                </li>
+                <li>
+                    <b>Chi Framework Go</b> - Minimalist, cepat, dan sangat cocok
+                    untuk middleware-heavy backend seperti rate limiting dan API gateway
+                </li>
+            </ul>
+        </Section>
+
+        <!-- IMPACT -->
+        <Section title="Impact">
+            <p>
+                Reduced login latency by ~40% and improved code maintainability.
+            </p>
+        </Section>
+
+        <!-- SAMPLE API -->
+        <Section title="Sample API Response">
+            <pre
+                class="bg-black text-green-400 p-4 rounded text-sm overflow-x-auto">{`{
+  "id": "user_123",
+  "email": "user@mail.com",
+  "role": "admin",
+  "token": "eyJhbGciOiJIUzI1..."
+}`}</pre>
+        </Section>
+
+        <!-- LINKS -->
+        <footer class="pt-6 border-t">
+            <a
+                href={project.repo}
+                target="_blank"
+                class="text-sm underline hover:opacity-70"
+            >
+                View Repository →
+            </a>
+        </footer>
+    </article>
+</BaseLayout>

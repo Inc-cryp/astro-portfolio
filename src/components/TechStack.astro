@@ -1,0 +1,22 @@
+---
+const stacks = [
+  "Go",
+  "Node.js",
+  "NestJS",
+  "Laravel",
+  "MySQL",
+  "PostgreSQL",
+  "Docker",
+  "Astro",
+  "React",
+  "Strapi"
+];
+---
+
+<ul class="flex flex-wrap gap-3">
+  {stacks.map(stack => (
+    <li class="px-4 py-2 text-sm border rounded-full border-gray-300 dark:border-gray-700">
+      {stack}
+    </li>
+  ))}
+</ul>

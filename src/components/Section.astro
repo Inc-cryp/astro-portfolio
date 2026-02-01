@@ -1,0 +1,19 @@
+---
+const { title } = Astro.props;
+---
+
+<section class="mb-12 sm:mb-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {
+      title && (
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4 tracking-tight">
+          {title}
+        </h2>
+      )
+    }
+
+    <div class="prose dark:prose-invert max-w-none">
+      <slot />
+    </div>
+  </div>
+</section>

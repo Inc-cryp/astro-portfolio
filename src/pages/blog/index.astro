@@ -1,0 +1,29 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import BlogList from "@/components/BlogList.astro";
+import Section from "@/components/Section.astro";
+import { seo } from "@/lib/seo";
+
+const meta = seo({
+    title: "Blog",
+    description: "Writing about backend, frontend, and software engineering",
+});
+---
+
+<BaseLayout>
+    <Fragment slot="head">
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+    </Fragment>
+
+    <div class="mt-24 sm:mt-8">
+        <Section title="Blog">
+            <p class="max-w-xl text-gray-600 dark:text-gray-400 mb-8">
+                Notes and thoughts on software engineering, backend systems, and
+                modern web development.
+            </p>
+
+            <BlogList />
+        </Section>
+    </div>
+</BaseLayout>

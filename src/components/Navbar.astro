@@ -1,0 +1,100 @@
+---
+import ThemeToggle from "@/components/ThemeToggle.jsx";
+
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "Projects", href: "/projects" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+];
+
+const { pathname } = Astro.url;
+---
+
+<header class="border-b border-gray-200 dark:border-gray-800">
+  <nav
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
+  >
+    <a href="/" class="font-bold text-lg"> Fazri.dev </a>
+
+    <!-- Hamburger button for mobile -->
+    <button
+      id="menu-toggle"
+      class="md:hidden text-gray-600 dark:text-gray-400 focus:outline-none"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <!-- Desktop menu -->
+    <div class="hidden md:flex items-center gap-8">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`text-sm transition
+            ${
+              pathname === item.href
+                ? "font-semibold text-black dark:text-white"
+                : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            }
+          `}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+
+      <ThemeToggle client:load />
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800"
+  >
+    <div class="px-4 py-4 flex flex-col gap-4">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`text-sm transition
+            ${
+              pathname === item.href
+                ? "font-semibold text-black dark:text-white"
+                : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            }
+          `}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+
+      <ThemeToggle client:load />
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  if (toggle) {
+    toggle.addEventListener("click", function () {
+      const menu = document.getElementById("mobile-menu");
+      if (menu) {
+        menu.classList.toggle("hidden");
+      }
+    });
+  }
+</script>

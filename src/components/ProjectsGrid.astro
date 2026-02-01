@@ -1,0 +1,54 @@
+---
+import ProjectCard from "@/components/ProjectCard.astro";
+import type { Project } from "@/lib/types/project";
+const { projects } = Astro.props as { projects: Project[] };
+
+projects.push(
+    {
+        id: 1,
+        title: "Strapi + Astro Developer Blog",
+        slug: "Static blog built with Astro and Strapi CMS.",
+        summary: "",
+        repo: "/projects/developer-blog",
+        tech: ["Astro", "Strapi", "Tailwind CSS", "Vercel"],
+        challenges: [],
+        outcome: [],
+    },
+    {
+        id: 2,
+        title: "Simple - Ewallet",
+        slug: "Static blog built with Astro and Strapi CMS.",
+        summary: "",
+        repo: "/projects/developer-blog",
+        tech: [
+            "Docker",
+            "Go",
+            "Chi Framework",
+            "MySQL",
+            "Redis",
+            "Ozzo Validation",
+        ],
+        challenges: [],
+        outcome: [],
+    },
+    {
+        id: 3,
+        title: "Laravel 11 CRUD Application with Mongodb",
+        slug: "Static blog built with Astro and Strapi CMS.",
+        summary: "",
+        repo: "/projects/developer-blog",
+        tech: ["Laravel 11", "Mongodb", "Docker"],
+        challenges: [],
+        outcome: [],
+    },
+);
+// projects = [
+//     {
+
+//     },
+// ];
+---
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {projects.map((project) => <ProjectCard {...project} />)}
+</div>

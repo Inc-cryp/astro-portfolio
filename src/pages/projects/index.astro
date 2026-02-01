@@ -1,0 +1,42 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getProjects } from "@/lib/strapi";
+import { seo } from "@/lib/seo";
+import ProjectsGrid from "@/components/ProjectsGrid.astro";
+import Section from "@/components/Section.astro";
+
+const meta = seo({
+    title: "Projects",
+    description: "Backend projects and system designs",
+});
+
+// FETCH
+const response = await getProjects();
+
+const projects = response.data.map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    summary: p.summary,
+    tech: p.tech,
+    repo: p.repo,
+}));
+---
+
+<BaseLayout>
+    <Fragment slot="head">
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+    </Fragment>
+
+    <div class="mt-24 sm:mt-8">
+        <Section title="Projects">
+            <p class="max-w-xl text-gray-600 dark:text-gray-400 mb-8">
+                A selection of projects showcasing my experience in backend and
+                modern frontend development.
+            </p>
+
+            <ProjectsGrid projects={projects} />
+        </Section>
+    </div>
+</BaseLayout>

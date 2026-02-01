@@ -1,0 +1,39 @@
+---
+import BlogCard from "@/components/BlogCard.astro";
+
+const posts = [
+    {
+        title: "Building a Performant Blog with Astro",
+        excerpt:
+            "How I use Astro and island architecture to build fast websites.",
+        date: "2026-01-20",
+        href: "/blog/building-performant-blog",
+    },
+    {
+        title: "Designing Clean APIs with Go",
+        excerpt: "Thoughts on REST API design and maintainability.",
+        date: "2026-01-15",
+        href: "/blog/clean-apis-go",
+    },
+    {
+        title: "Astro vs Next.js: When to Choose What",
+        excerpt: "A comparison based on real project experience.",
+        date: "2026-01-10",
+        href: "/blog/astro-vs-nextjs",
+    },
+];
+---
+
+{
+    posts.length === 0 ? (
+        <p class="text-center text-gray-500 py-16">
+            No posts yet. Check back soon ✍️
+        </p>
+    ) : (
+        <div class="grid gap-6 sm:grid-cols-2">
+            {posts.map((post) => (
+                <BlogCard {...post} />
+            ))}
+        </div>
+    )
+}
