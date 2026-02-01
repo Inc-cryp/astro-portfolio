@@ -1,24 +1,25 @@
 ---
-// import { getPostBySlug } from "@/lib/strapi";
+import { getProjects, getProjectBySlug } from "@/lib/strapi";
 
-// export async function getStaticPaths() {
-//     const posts = (
-//         await fetch(`${import.meta.env.PUBLIC_STRAPI_URL}/posts`).then((r) =>
-//             r.json(),
-//         )
-//     ).data;
+export async function getStaticPaths() {
+    const response = await getProjects();
 
-//     return posts.map((post: { slug: string }) => ({
-//         params: { slug: post.slug },
-//     }));
-// }
+    return response.data.map((p) => ({
+        params: { slug: p.slug },
+    }));
+}
 
 const { slug } = Astro.params;
 // const post = (await getPostBySlug(slug)).data[0];
----
 
-<article>
-    <h1>slug: {slug}</h1>
-    <!-- <p>{post.excerpt}</p> -->
-    <!-- <div set:html={post.content} /> -->
-</article>
+if (!slug) {
+    return Astro.redirect("/404");
+}
+
+const project = await getProjectBySlug(slug);
+
+// Jika proyek tidak ditemukan, redirect ke /projects
+if (!project) {
+    return Astro.redirect("/404");
+}
+---

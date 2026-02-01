@@ -1,5 +1,5 @@
 import type { ProjectAttributes, StrapiResponse } from "./types/project"
-
+import type { Project } from "@/lib/types/project";
 
 const API_URL = import.meta.env.PUBLIC_STRAPI_URL;
 
@@ -39,9 +39,6 @@ export async function getProjects(): Promise<StrapiResponse<ProjectAttributes>> 
     return res.json();
 }
 
-import type { Project } from "@/lib/types/project";
-
-
 export async function getProjectBySlug(
     slug: string
 ): Promise<Project | null> {
@@ -61,10 +58,13 @@ export async function getProjectBySlug(
 
     return {
         id: p.id,
-        title: p.title,
-        slug: p.slug,
-        summary: p.summary,
-        tech: p.tech,
-        repo: p.repo,
+        title: p.attributes.title,
+        slug: p.attributes.slug,
+        summary: p.attributes.summary,
+        tech: p.attributes.tech,
+        repo: p.attributes.repo,
+        challenges: p.attributes.challenges,
+        outcome: p.attributes.outcome,
+
     };
 }
