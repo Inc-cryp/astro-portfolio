@@ -1,8 +1,8 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import Section from "@/components/Section.astro";
-import TechBadge from "@/components/Project/TechBadge.astro";
-import { getProjects, getProjectBySlug } from "@/lib/strapi";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
+import TechBadge from "../../components/Project/TechBadge.astro";
+import { getProjects, getProjectBySlug } from "../../lib/strapi";
 
 export async function getStaticPaths() {
     const response = await getProjects();

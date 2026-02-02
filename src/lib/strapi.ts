@@ -1,5 +1,5 @@
-import type { ProjectAttributes, StrapiResponse } from "./types/project"
-import type { Project } from "@/lib/types/project";
+import type { ProjectAttributes, StrapiResponse } from "../lib/types/project"
+import type { Project } from "../lib/types/project";
 
 const API_URL = import.meta.env.PUBLIC_STRAPI_URL;
 

@@ -1,5 +1,5 @@
 ---
-import { getProjects, getProjectBySlug } from "@/lib/strapi";
+import { getProjects, getProjectBySlug } from "../../lib/strapi";
 
 export async function getStaticPaths() {
     const response = await getProjects();
