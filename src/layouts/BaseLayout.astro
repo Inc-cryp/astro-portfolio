@@ -4,7 +4,6 @@ import Footer from "../components/Footer.astro";
 import CommandPalette from "../components/CommandPalette.jsx";
 
 // Import CSS di frontmatter, Astro + Vite akan bundling otomatis
-import "../styles/global.css";
 ---
 
 <!doctype html>
@@ -13,6 +12,7 @@ import "../styles/global.css";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <slot name="head" />
+    <link rel="stylesheet" href="/global.css" />
   </head>
 
   <body
