@@ -1,0 +1,96 @@
+name: CI
+
+# Every step below is an npm script, so CI and a workstation cannot disagree
+# about what "passing" means: if a step looks like a shell rewrite of a script
+# in package.json, that is the bug — change the script and call it.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A branch that is being force-pushed does not need its previous run finished.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Pinned, not floating. Astro 5 requires node >=22 (or 18.20.8 / ^20.3.0);
+  # pinning means a Node release cannot turn this pipeline red without a
+  # commit in this repository.
+  NODE_VERSION: "22"
+
+jobs:
+  # Diagnostics are cheap and fail fast, so they get their own job instead of
+  # queueing behind a full production build.
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      # `npm ci` rather than `npm install`: it installs the exact tree in
+      # package-lock.json and fails outright if the lockfile has drifted from
+      # package.json, which is the failure mode a CI install should catch.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm run lint
+        run: npm run lint
+
+  # The build is the real gate. Every page is pre-rendered, so a page that
+  # cannot resolve its content fails the build rather than shipping a blank
+  # route. This runs with no .env and no CMS configured, which is the state a
+  # fresh clone is in — if that regresses, this job goes red.
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm run build
+        run: npm run build
+
+      # A build that emits an empty route list is a green pipeline that
+      # deployed nothing. Assert the routes the site advertises actually
+      # exist before calling this a success.
+      - name: Assert every advertised route was generated
+        run: |
+          missing=0
+          for route in / /blog/ /projects/ /contact/ \
+                       /blog/building-performant-blog/ \
+                       /blog/clean-apis-go/ \
+                       /blog/astro-vs-nextjs/; do
+            if [ ! -f "dist${route}index.html" ]; then
+              echo "::error::route was not generated: ${route}"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Upload build artefact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist
+          retention-days: 7

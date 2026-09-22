@@ -1,25 +1,69 @@
 ---
-import { getProjects, getProjectBySlug } from "../../lib/strapi";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
+import TechBadge from "../../components/Project/TechBadge.astro";
+import { getPostBySlug, getPosts } from "../../lib/content";
 
 export async function getStaticPaths() {
-    const response = await getProjects();
+    const posts = await getPosts();
 
-    return response.data.map((p) => ({
-        params: { slug: p.slug },
+    return posts.map((post) => ({
+        params: { slug: post.slug },
     }));
 }
 
 const { slug } = Astro.params;
-// const post = (await getPostBySlug(slug)).data[0];
+const post = await getPostBySlug(slug as string);
 
-if (!slug) {
-    throw new Error(`Project not found for slug: ${slug}`);
+if (!post) {
+    throw new Error(`Post not found for slug: ${slug}`);
 }
 
-const project = await getProjectBySlug(slug);
+const { title, excerpt, date, body, category, cover } = post;
 
-// Jika proyek tidak ditemukan, redirect ke /projects
-if (!project) {
-    throw new Error(`Project not found for slug: ${slug}`);
-}
+const meta = { title, description: excerpt };
 ---
+
+<BaseLayout>
+    <Fragment slot="head">
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+    </Fragment>
+
+    <article class="max-w-3xl mx-auto py-12 space-y-12">
+        <header>
+            <h1 class="text-3xl font-bold">{title}</h1>
+            <p class="mt-3 text-gray-600 dark:text-gray-400">{excerpt}</p>
+
+            <div class="flex flex-wrap gap-2 mt-4">
+                {date && <time class="text-xs text-gray-500">{date}</time>}
+                {category?.name && <TechBadge label={category.name} />}
+            </div>
+        </header>
+
+        {
+            cover?.url && (
+                <img
+                    src={cover.url}
+                    alt={cover.alternativeText ?? title}
+                    class="rounded-lg w-full"
+                    loading="lazy"
+                />
+            )
+        }
+
+        {
+            body ? (
+                <Section title="Content">
+                    <div set:html={body} />
+                </Section>
+            ) : (
+                <Section title="Content">
+                    <p class="text-gray-500">
+                        This post has no body content yet.
+                    </p>
+                </Section>
+            )
+        }
+    </article>
+</BaseLayout>

@@ -1,46 +1,104 @@
-# Astro Starter Kit: Basics
+# Astro Portfolio
 
-```sh
-npm create astro@latest -- --template basics
+Personal portfolio and blog for **Abdillah Fazri** — backend-focused developer
+building fast, scalable web applications.
+
+Built with [Astro](https://astro.build) (static output), Tailwind CSS and a
+small amount of React for the interactive parts.
+
+Live: <https://astro-portfolio-oy77-inc-cryps-projects.vercel.app>
+
+## Quick start
+
+```bash
+npm install
+npm run dev      # http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+No configuration is required to start. With no `.env` file the site builds from
+the local content files in `src/data`, so a fresh clone works offline.
 
-## 🚀 Project Structure
+## Commands
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command           | What it does                                              |
+| ----------------- | --------------------------------------------------------- |
+| `npm run dev`     | Dev server with hot reload                                |
+| `npm run build`   | Production build into `dist/` (statically pre-rendered)    |
+| `npm run preview` | Serve the contents of `dist/` locally                      |
+| `npm run check`   | `astro check` — TypeScript and template diagnostics        |
+| `npm run lint`    | `astro check` (alias kept for tooling that expects it)     |
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+## Content
+
+Every page is pre-rendered at build time, so the content source has to be
+resolvable *during the build*.
+
+There are two sources:
+
+1. **Local files** — `src/data/posts.ts` and `src/data/projects.ts`. This is the
+   default, and it is what makes a clean clone build with no CMS and no `.env`.
+2. **Strapi** — used automatically when `PUBLIC_STRAPI_URL` is set.
+
+`src/lib/content.ts` is the only module that knows which one is active. Pages
+import `getPosts()`, `getPostBySlug()`, `getProjects()` and `getProjectBySlug()`
+from it and never talk to Strapi directly.
+
+```ts
+import { getPosts } from "@/lib/content";
+
+const posts = await getPosts();
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Because the blog list and the blog routes are both derived from `getPosts()`, a
+link can never point at a page that was not generated.
 
-## 🧞 Commands
+### Using Strapi
 
-All commands are run from the root of the project, from a terminal:
+Copy `.env.example` to `.env` and set the URL of your Strapi instance:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```bash
+PUBLIC_STRAPI_URL=https://your-strapi-host
+```
 
-## 👀 Want to learn more?
+The instance must expose the `posts` and `projects` collections. Each item is
+normalised out of Strapi's `{ id, attributes }` envelope into the plain shapes in
+`src/lib/types/content.ts`, so the rest of the site is unaware of the CMS.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+> `PUBLIC_` variables are inlined into the client bundle — never put a secret in
+> one.
+
+## Project structure
+
+```
+src/
+├── components/        # UI building blocks (Astro + a few .jsx islands)
+│   └── Project/       # project-detail-only components
+├── data/              # local content, used when Strapi is not configured
+│   ├── posts.ts
+│   └── projects.ts
+├── layouts/
+│   └── BaseLayout.astro
+├── lib/
+│   ├── content.ts     # the single entry point for content
+│   ├── seo.ts
+│   └── types/
+│       └── content.ts
+└── pages/
+    ├── blog/[slug].astro
+    ├── projects/[slug].astro
+    └── ...
+```
+
+## Deployment
+
+Deployed on Vercel. The `site` value in `astro.config.mjs` is what the sitemap
+and canonical URLs are built from; override it per environment with `SITE_URL`
+when deploying to a different origin:
+
+```bash
+SITE_URL=https://example.com npm run build
+```
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
