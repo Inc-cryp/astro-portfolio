@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getProjects } from "@/lib/strapi";
+import { getProjects } from "@/lib/content";
 import { seo } from "@/lib/seo";
 import ProjectsGrid from "@/components/ProjectsGrid.astro";
 import Section from "@/components/Section.astro";
@@ -10,17 +10,7 @@ const meta = seo({
     description: "Backend projects and system designs",
 });
 
-// FETCH
-const response = await getProjects();
-
-const projects = response.data.map((p) => ({
-    id: p.id,
-    title: p.title,
-    slug: p.slug,
-    summary: p.summary,
-    tech: p.tech,
-    repo: p.repo,
-}));
+const projects = await getProjects();
 ---
 
 <BaseLayout>
@@ -36,7 +26,13 @@ const projects = response.data.map((p) => ({
                 modern frontend development.
             </p>
 
-            <ProjectsGrid projects={projects} />
+            {
+                projects.length === 0 ? (
+                    <p class="text-gray-500">No projects to show yet.</p>
+                ) : (
+                    <ProjectsGrid projects={projects} />
+                )
+            }
         </Section>
     </div>
 </BaseLayout>

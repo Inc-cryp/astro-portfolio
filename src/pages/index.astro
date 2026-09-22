@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/Hero.astro";
 import Section from "../components/Section.astro";
 import TechStack from "../components/TechStack.astro";
+import BlogList from "../components/BlogList.astro";
 import { seo } from "../lib/seo";
 
 const meta = seo({
@@ -10,7 +11,6 @@ const meta = seo({
   description:
     "Backend-focused developer building fast, scalable web applications",
 });
-// const projects = (await getProjects()).slice(0, 2);
 ---
 
 <BaseLayout>
@@ -30,38 +30,7 @@ const meta = seo({
       Notes and thoughts on software engineering, backend systems, and modern
       web development.
     </p>
-    <div class="grid gap-6 sm:grid-cols-2">
-      <article
-        class="border border-gray-200 dark:border-gray-800 rounded-lg p-5 hover:-translate-y-1 hover:shadow-md"
-      >
-        <time class="block text-xs text-gray-500 dark:text-gray-400 mb-2"
-          >2026-01-20</time
-        >
-        <h3 class="text-lg font-semibold mb-2">
-          <a href="/blog/building-performant-blog" class="hover:underline"
-            >Building a Performant Blog with Astro</a
-          >
-        </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          How I use Astro and island architecture to build fast websites.
-        </p>
-      </article>
-      <article
-        class="border border-gray-200 dark:border-gray-800 rounded-lg p-5 hover:-translate-y-1 hover:shadow-md"
-      >
-        <time class="block text-xs text-gray-500 dark:text-gray-400 mb-2"
-          >2026-01-15</time
-        >
-        <h3 class="text-lg font-semibold mb-2">
-          <a href="/blog/clean-apis-go" class="hover:underline"
-            >Designing Clean APIs with Go</a
-          >
-        </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          Thoughts on REST API design and maintainability.
-        </p>
-      </article>
-    </div>
+    <BlogList limit={2} />
     <div class="mt-8">
       <a
         href="/blog"

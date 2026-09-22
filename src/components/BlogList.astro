@@ -1,27 +1,16 @@
 ---
 import BlogCard from "@/components/BlogCard.astro";
+import { getPosts } from "@/lib/content";
 
-const posts = [
-    {
-        title: "Building a Performant Blog with Astro",
-        excerpt:
-            "How I use Astro and island architecture to build fast websites.",
-        date: "2026-01-20",
-        href: "/blog/building-performant-blog",
-    },
-    {
-        title: "Designing Clean APIs with Go",
-        excerpt: "Thoughts on REST API design and maintainability.",
-        date: "2026-01-15",
-        href: "/blog/clean-apis-go",
-    },
-    {
-        title: "Astro vs Next.js: When to Choose What",
-        excerpt: "A comparison based on real project experience.",
-        date: "2026-01-10",
-        href: "/blog/astro-vs-nextjs",
-    },
-];
+// Derived from the same source that generates /blog/[slug] routes, so a card
+// can never link to a page that was not pre-rendered.
+//
+// `limit` lets the homepage show a preview without hardcoding links that the
+// blog route might not generate.
+const { limit } = Astro.props as { limit?: number };
+
+const posts = await getPosts();
+const visible = typeof limit === "number" ? posts.slice(0, limit) : posts;
 ---
 
 {
@@ -31,8 +20,13 @@ const posts = [
         </p>
     ) : (
         <div class="grid gap-6 sm:grid-cols-2">
-            {posts.map((post) => (
-                <BlogCard {...post} />
+            {visible.map((post) => (
+                <BlogCard
+                    title={post.title}
+                    excerpt={post.excerpt}
+                    date={post.date}
+                    href={`/blog/${post.slug}`}
+                />
             ))}
         </div>
     )
